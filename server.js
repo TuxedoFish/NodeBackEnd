@@ -9,8 +9,10 @@ const util = require('util');
 var moment = require('moment');
 const nodeRequest = require('request');
 
-const client_id = process.env.OAUTH_CLIENT_ID
-const client_secret = process.env.OAUTH_CLIENT_SECRET
+const client_id = process.env.OAUTH_CLIENT_ID;
+const client_secret = process.env.OAUTH_CLIENT_SECRET;
+
+console.log("client_id" = client_id);
 
 var states = { };
 
