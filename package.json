@@ -1,0 +1,28 @@
+{
+  "name": "com.tuxedofish.nodebe",
+  "version": "0.0.1",
+  "description": "A backend for a social app being developed",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.16.3",
+    "moment": "^2.22.2",
+    "randomstring": "^1.1.5",
+    "request": "^2.88.0",
+    "util": "^0.11.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/TuxedoFish/NodeBackEnd.git"
+  },
+  "author": "Harry Liversedge <harryliversedge@gmail.com> (http://tuxedofish.co.nf)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TuxedoFish/NodeBackEnd/issues"
+  },
+  "homepage": "https://github.com/TuxedoFish/NodeBackEnd#readme"
+}
