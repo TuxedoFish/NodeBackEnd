@@ -20,7 +20,7 @@ $(document).ready(function() {
   $.getJSON(url, function(data) {
     console.log(data);
     if (data["ok"] == true) {
-      $('#full_name').html(data["name"]);
+      $('#full_name').html(data["full_name"]);
     }
   });
 });
