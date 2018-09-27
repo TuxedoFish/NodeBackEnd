@@ -56,8 +56,11 @@ app.get("/oauth/callback", function(request, response) {
             name = body.full_name;
             var protectionKey = randomstring.generate();
             var user = {
-              "name": body.full_name,
+              "first_name": body.given_name,
+              "full_name": body.full_name,
               "department": body.department,
+              "email": body.email,
+              "is_student": body.is_student,
               "token": token,
               "auth_key": protectionKey
             }
@@ -81,7 +84,10 @@ app.get("/oauth/userdata/:id/:key", function(request, response) {
     response.send(JSON.stringify(
     {
       "ok": true,
-      "name": users[request.params.id]["name"],
+      "first_name": users[request.params.id]["first_name"],
+      "full_name": users[request.params.id]["full_name"],
+      "email": users[request.params.id]["email"],
+      "is_student": users[request.params.id]["is_student"],
       "department": users[request.params.id]["department"]
     }));
   }
