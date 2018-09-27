@@ -21,7 +21,6 @@ $(document).ready(function() {
     console.log(data);
     if (data["ok"] == true) {
       $('#full_name').html(data["name"]);
-      $('#department').html(data["department"]);
     }
   });
 });
