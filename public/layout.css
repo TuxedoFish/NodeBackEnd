@@ -8,7 +8,7 @@
 .central {
 	position: absolute;
 	margin: auto;
-	width: 80%;
+	width: 95%;
 	text-align: center;
 
 	top: 0;
@@ -17,10 +17,10 @@
 	right: 0;
 }
 .welcome_text {
-	font-size: 5vw;
+	font-size: 15vw;
 	color: #51cd5b;
 }
 .name_text {
-	font-size: 5vw;
+	font-size: 15vw;
 	color: #51cd5b;
 }
