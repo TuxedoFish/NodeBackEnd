@@ -8,6 +8,7 @@ var randomstring = require("randomstring");
 const util = require('util');
 var moment = require('moment');
 const nodeRequest = require('request');
+var db = require('/public/db/database.js');
 
 const client_id = process.env.OAUTH_CLIENT_ID;
 const client_secret = process.env.OAUTH_CLIENT_SECRET;
