@@ -6,7 +6,7 @@ var admin = require('firebase-admin');
 //initialises a firebase app with the credential
 admin.initializeApp({
   credential: admin.credential.cert({
-    "private_key": process.env.FIREBASE_CLIENT_SECRET,
+    "private_key": process.env.FIREBASE_PRIVATE_KEY,
     "client_email": process.env.FIREBASE_CLIENT_EMAIL,
   }),
   databaseURL: "https://socialapp-575bc.firebaseio.com"
