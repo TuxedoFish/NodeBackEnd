@@ -15,7 +15,8 @@ const nodeRequest = require('request');
 //requires firebase module
 var admin = require('firebase-admin');
 var key = process.env.FIREBASE_PRIVATE_KEY;
-key = key.replace("/\\n/g", "\n");
+console.log(typeof(key));
+key = key.replace(/\\n/g, '\n');
 //initialises a firebase app with the credential
 admin.initializeApp({
   credential: admin.credential.cert({
