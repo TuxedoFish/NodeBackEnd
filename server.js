@@ -1,3 +1,14 @@
+
+// where your node app starts
+
+// init project
+var express = require('express');
+var app = express();
+var randomstring = require("randomstring");
+const util = require('util');
+var moment = require('moment');
+const nodeRequest = require('request');
+
 //database.js
 //logic to run the back end matching algorithm
 
@@ -28,15 +39,6 @@ var db = admin.firestore();
 //TEST
 
 // server.js
-// where your node app starts
-
-// init project
-var express = require('express');
-var app = express();
-var randomstring = require("randomstring");
-const util = require('util');
-var moment = require('moment');
-const nodeRequest = require('request');
 
 const client_id = process.env.OAUTH_CLIENT_ID;
 const client_secret = process.env.OAUTH_CLIENT_SECRET;
