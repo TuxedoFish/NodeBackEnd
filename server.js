@@ -16,8 +16,8 @@ const nodeRequest = require('request');
 var admin = require('firebase-admin');
 var key = process.env.FIREBASE_PRIVATE_KEY;
 console.log(typeof(key));
-console.log(key.length);
 console.log(key);
+console.log(key.length);
 key = key.replace(/\\n/g, '\n');
 //initialises a firebase app with the credential
 admin.initializeApp({
