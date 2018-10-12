@@ -14,11 +14,10 @@ const nodeRequest = require('request');
 
 //requires firebase module
 var admin = require('firebase-admin');
-var key = process.env.FIREBASE_PRIVATE_KEY_ID;
 //initialises a firebase app with the credential
 admin.initializeApp({
   credential: admin.credential.cert({
-    "private_key": key.replace('/\\n\g', '\n'),
+    "private_key": JSON.parse(process.env.FIREBASE_PRIVATE_KEY_ID),
     "client_email": process.env.FIREBASE_CLIENT_EMAIL,
     "project_id": process.env.FIREBASE_PROJECT_ID,
     "private_key_id": process.env.FIREBASE_PRIVATE_KEY_ID
