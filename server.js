@@ -14,10 +14,12 @@ const nodeRequest = require('request');
 
 //requires firebase module
 var admin = require('firebase-admin');
+const private_key = process.env.FIREBASE_PRIVATE_KEY_ID;
+console.log(private_key);
 //initialises a firebase app with the credential
 admin.initializeApp({
   credential: admin.credential.cert({
-    "private_key": (process.env.FIREBASE_PRIVATE_KEY_ID).replace(/\\n/g, '\n');,
+    "private_key": process.env.FIREBASE_PRIVATE_KEY_ID,
     "client_email": process.env.FIREBASE_CLIENT_EMAIL,
     "project_id": process.env.FIREBASE_PROJECT_ID,
     "private_key_id": process.env.FIREBASE_PRIVATE_KEY_ID
@@ -37,7 +39,6 @@ var db = admin.firestore();
 //TEST
 
 // server.js
-
 const client_id = process.env.OAUTH_CLIENT_ID;
 const client_secret = process.env.OAUTH_CLIENT_SECRET;
 
