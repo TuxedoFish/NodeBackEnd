@@ -47,23 +47,22 @@ function listenForRequests() {
 				//Set up a document in group
 				var groupFileName = generateGroupFileName();
 				//Create group file in GROUPS with all the relevant information
-				db.collection("GROUPS").(groupFileName).set(getGroupDoc(5));
+				db.collection("GROUPS").document(groupFileName).set(getGroupDoc(5));
 				//Update all of the individual elements
 				groupName.forEach(function(user) {
 					//add location of the group data
 					//also update the status of the user to finish
-					db.collection("USERS").(user.get("id")).update(getUserInformation(groupFileName, groupFileLoc));
+					db.collection("USERS").document(user.get("id")).update(getUserInformation(groupFileName, groupFileLoc));
 					
 					var other_id = 0;
 					for(var i=0; i<groupName.size(); i++) {
 						if(groupName[i].get("id")!=user.get("id")) {
-							db.collection("USERS").(user.get("id")).collection("MATCHES").document(other_id).set(
+							db.collection("USERS").document(user.get("id")).collection("MATCHES").document(other_id).set(
 								getUserInformation(groupName[i].get("id"), groupName[i].get("first_name")));
 							other_id ++;
 						}
 					}
 				});
-
 				//finished this logic loop so if there is no more multiples of 5 will finish
 				finished=true;
 			}
