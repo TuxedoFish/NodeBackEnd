@@ -25,15 +25,15 @@ Sets up a snapshot listener that waits until the amount of users searching has c
 2 is equal to the integer corresponding to "Constants.STATUS_SEARCHING"
 */
 function listenForRequests() {
-	var query = db.collection("USERS").where('status', '==', '2')
-									  .get().then(snapshot => {
-	    snapshot.forEach(doc => {
-	    	console.log(doc.first_name, '=>', doc.data());
-	    });
-    })
-    .catch(err => {
-      console.log('Error getting documents', err);
-    });
+	var query = db.collection("USERS").where('status', '==', '2');
+
+	var observer = query.onSnapshot(querySnapshot => {
+	  console.log(`Received query snapshot of size ${querySnapshot.size}`);
+	  console.log(querySnapshot[0]);
+	  // ...
+	}, err => {
+	  console.log(`Encountered error: ${err}`);
+	});
 }
 
 module.exports.listenForRequests = listenForRequests;
