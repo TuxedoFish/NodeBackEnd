@@ -25,7 +25,8 @@ Sets up a snapshot listener that waits until the amount of users searching has c
 2 is equal to the integer corresponding to "Constants.STATUS_SEARCHING"
 */
 function listenForRequests() {
-	var query = db.collection("USERS").where('status', '==', '2');
+	console.log("begun search");
+	var query = db.collection("USERS").where('status', '==', 2);
 
 	var observer = query.onSnapshot(querySnapshot => {
 	  console.log(`Received query snapshot of size ${querySnapshot.size}`);
