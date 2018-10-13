@@ -25,7 +25,7 @@ Sets up a snapshot listener that waits until the amount of users searching has c
 2 is equal to the integer corresponding to "Constants.STATUS_SEARCHING"
 */
 function listenForRequests() {
-	var query = db.collection("USERS").where('STATUS', '==', '2')
+	var query = db.collection("USERS").where('status', '==', '2')
 									  .get().then(snapshot => {
 	    snapshot.forEach(doc => {
 	    	console.log(doc.first_name, '=>', doc.data());
