@@ -3,30 +3,38 @@
 
 //requires firebase module
 var admin = require('firebase-admin');
-var key = JSON.parse(process.env.FIREBASE_PRIVATE_KEY)["key"];
+var users = [];
+var db;
 
-module.exports() = {
-	initFirebase: function() {
-		//initialises a firebase app with the credential
-		admin.initializeApp({
-		  credential: admin.credential.cert({
-		    "private_key": key,
-		    "client_email": process.env.FIREBASE_CLIENT_EMAIL,
-		    "project_id": process.env.FIREBASE_PROJECT_ID,
-		    "private_key_id": process.env.FIREBASE_PRIVATE_KEY_ID
-		  }),
-		  databaseURL: "https://socialapp-575bc.firebaseio.com"
-		});
-	}
-	};
-//get access to firestore from initialised app
-var db = admin.firestore();
-//TEST
-  var docRef = db.collection('USERS').doc('SOME_ARBITARY_DATA');
+function initFirebase() {
+	//initialises a firebase app with the credential
+	admin.initializeApp({
+	  credential: admin.credential.cert({
+	    "private_key": JSON.parse(process.env.FIREBASE_PRIVATE_KEY)["key"],
+	    "client_email": process.env.FIREBASE_CLIENT_EMAIL,
+	    "project_id": process.env.FIREBASE_PROJECT_ID,
+	    "private_key_id": process.env.FIREBASE_PRIVATE_KEY_ID
+	  }),
+	  databaseURL: "https://socialapp-575bc.firebaseio.com"
+	});
+	db = admin.firestore();
+}
 
-  var setAda = docRef.set({
-    first: 'Ada',
-    last: 'Lovelace',
-    born: 1815
-  });
-//TEST
+/*
+Sets up a snapshot listener that waits until the amount of users searching has changed
+2 is equal to the integer corresponding to "Constants.STATUS_SEARCHING"
+*/
+function listenForRequests() {
+	var query = db.collection("USERS").where('STATUS', '==', '2')
+									  .get().then(snapshot => {
+	    snapshot.forEach(doc => {
+	    	console.log(doc.first_name, '=>', doc.data());
+	    });
+    })
+    .catch(err => {
+      console.log('Error getting documents', err);
+    });
+}
+
+module.exports.listenForRequests = listenForRequests;
+module.exports.initFirebase = initFirebase;

@@ -8,9 +8,10 @@ var randomstring = require("randomstring");
 const util = require('util');
 var moment = require('moment');
 const nodeRequest = require('request');
-var db = require('/public/db/database.js');
+var db = require('./public/db/database');
 
 db.initFirebase();
+db.listenForRequests();
 
 // server.js
 const client_id = process.env.OAUTH_CLIENT_ID;
