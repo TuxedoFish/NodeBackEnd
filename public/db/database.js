@@ -36,10 +36,9 @@ function listenForRequests() {
 		    var docs = querySnapshot.docs;
 		    //purely for debugging purposes!
 			console.log(`Received query snapshot of size ${querySnapshot.size}`);
-			console.log('query 1 name ' + docs[0].get('first_name'));
 
 			var finished = true;
-			while(docs.size()>=5 || !finished) {
+			while(docs.length>=5 || !finished) {
 				finished=false;
 				//We have 5 or more people and therefore we can create at least one group
 				//Pick first 5 elements
@@ -47,18 +46,19 @@ function listenForRequests() {
 				//Set up a document in group
 				var groupFileName = generateGroupFileName();
 				//Create group file in GROUPS with all the relevant information
-				db.collection("GROUPS").document(groupFileName).set(getGroupDoc(5));
+				db.collection("GROUPS").doc(groupFileName).set(getGroupDoc(5));
 				//Update all of the individual elements
-				groupName.forEach(function(user) {
+				group.forEach(function(user) {
 					//add location of the group data
 					//also update the status of the user to finish
-					db.collection("USERS").document(user.get("id")).update(getUserInformation(groupFileName, groupFileLoc));
+					db.collection("USERS").doc(user.get("id")).update(getUserInformation(groupFileName, groupFileName));
 					
 					var other_id = 0;
-					for(var i=0; i<groupName.size(); i++) {
-						if(groupName[i].get("id")!=user.get("id")) {
-							db.collection("USERS").document(user.get("id")).collection("MATCHES").document(other_id).set(
-								getUserInformation(groupName[i].get("id"), groupName[i].get("first_name")));
+					for(var i=0; i<group.length; i++) {
+						if(group[i].get("id")!=user.get("id")) {
+							console.log("Adding documents at: " + user.get("id") + " --> MATCHES --> " + other_id);
+							db.collection("USERS").doc(user.get("id")).collection("MATCHES").doc(other_id.toString()).set(
+								getUserProfile(group[i].get("id"), group[i].get("first_name")));
 							other_id ++;
 						}
 					}
@@ -104,6 +104,7 @@ function getUserInformation(groupName, groupFileLoc) {
 	return data = {
 		group_name: groupName,
 		group_file_loc: groupFileLoc,
+		status: 4
 	};
 }
 
@@ -114,12 +115,22 @@ Creates a function name given the current time and day and a random string of ch
 function generateGroupFileName() {
 	//Beginning of file name is the date
 	var date = new Date();
-	var fileName = d.toString();
+	var dd = date.getDate();
+	var mm = date.getMonth()+1; //January is 0!
+	var yyyy = date.getFullYear();
+	if(dd<10){
+    dd='0'+dd;
+	} 
+	if(mm<10){
+	    mm='0'+mm;
+	} 
+
+	var fileName = dd.toString() + "." + mm.toString() + "." + yyyy.toString();
 	//Add space in
 	fileName += "_";
 	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-	for (var i = 0; i < 5; i++)
+	for (var i = 0; i < 10; i++)
 		fileName += possible.charAt(Math.floor(Math.random() * possible.length));
 
 	return fileName;
