@@ -5,6 +5,8 @@
 var admin = require('firebase-admin');
 var db;
 
+var spaces = [];
+
 var lock = false;
 
 function initFirebase() {
@@ -38,44 +40,125 @@ function listenForRequests() {
 			console.log(`Received query snapshot of size ${querySnapshot.size}`);
 
 			var finished = true;
-			while(docs.length>=5 || !finished) {
-				finished=false;
-				//We have 5 or more people and therefore we can create at least one group
-				//Pick first 5 elements
-				var group = docs.splice(0, 5);
-				//Set up a document in group
-				var groupFileName = generateGroupFileName();
-				//Create group file in GROUPS with all the relevant information
-				db.collection("GROUPS").doc(groupFileName).set(getGroupDoc(5));
-				//Update all of the individual elements
-				group.forEach(function(user) {
-					//add location of the group data
-					//also update the status of the user to finish
-					db.collection("USERS").doc(user.get("id")).update(getUserInformation(groupFileName, groupFileName));
-					
-					var other_id = 0;
-					for(var i=0; i<group.length; i++) {
-						if(group[i].get("id")!=user.get("id")) {
-							console.log("Adding documents at: " + user.get("id") + " --> MATCHES --> " + other_id);
-							db.collection("USERS").doc(user.get("id")).collection("MATCHES").doc(other_id.toString()).set(
-								getUserProfile(group[i].get("id"), group[i].get("first_name")));
-							other_id ++;
-						}
-					}
-				});
-				//finished this logic loop so if there is no more multiples of 5 will finish
-				finished=true;
-			}
+			var ID = "id";
+			var SPACE_LEFT = "space";
+
 			if(docs.size>0) {
 				//Logic for if we have got less then 5 users - Put into small groups and add new users to them
-			}
+				if(spaces.size>0) {
+					//We have a group that may be a possible match
+					for(var i=0; i<docs.size; i++) {
+						//Keeps looking at the amount of spaces remaining until it resolves and finds a fit
+						var resolved = false;
+						var j = 0;
+						while(!resolved) {
+							if(spaces[j][SPACE_LEFT]>0) {
+								//Tests if there is a strong match between the group and the searching user
+								if(isMatchStrong()) {
+									//Logic here to add a user to an existing group
+									addIntoGroup(docs.get(i), spaces[j][id]);
+									resolved = true;
+									spaces[j][SPACE_LEFT] --;
+								} else {
+									//Otherwise carry on to the next element
+									j ++;
+								}
+							} else {
+								spaces = spaces.shift;
+							}
+						}
+					}
+				} else {
+					//Here we do not have any spaces currently in any groups
+					//We will only create a group if there is at least 2 users with a significant match
+					if(docs.size > 1) {
+						//Returns the indexes of the optimal group
+						var indexes = getStrengthOfMatches(docs);
 
+						//Creates the group from the indexes
+						var group = [];
+						indexes.forEach(function(index) { group.push(docs[index]); })
+
+						//Function creates the group in the database
+						createGroupFromArray(group);
+					}
+				}
+			}
+			
 			//having completed all of the logic it unlocks the system
 			lock=false;
 		}
 	}, err => {
 	  console.log(`Encountered error: ${err}`);
 	});
+}
+
+function createGroupFromArray(group, size) {
+	var groupFileName = generateGroupFileName();
+	//Create group file in GROUPS with all the relevant information
+	db.collection("GROUPS").doc(groupFileName).set(getGroupDoc(size));
+	//Add the file locations of the users to the file
+	for(var i=0; i<group.length; i++) {
+		db.collection("GROUPS").doc(groupFileName).collection("ids").doc(i).set({id: user.get("id")});
+	}
+	//Update all of the individual elements
+	group.forEach(function(user) {
+		//add location of the group data
+		//also update the status of the user to finish
+		db.collection("USERS").doc(user.get("id")).update(getUserInformation(groupFileName, groupFileName));
+		
+		var other_id = 0;
+		for(var i=0; i<group.length; i++) {
+			if(group[i].get("id")!=user.get("id")) {
+				console.log("Adding documents at: " + user.get("id") + " --> MATCHES --> " + other_id);
+				
+				db.collection("USERS").doc(user.get("id")).collection("MATCHES")
+				.doc(other_id.toString()).set(getUserProfile(group[i].get("id"), group[i].get("first_name")));
+				other_id ++;
+			}
+		}
+	});
+
+	//Add the space in this array to be checked
+	spaces.push( { id: groupFileName, space: (5-size) } );
+}
+
+/*
+Given one element from a querySnapshot this function should update an existing group
+*/
+function addIntoGroup(user, groupFileName) {
+	var groupQuery = db.collection('GROUPS').doc(groupFileName).collection(ids).get()
+  		.then(snapshot => {
+  			//Obtain the current size of the group 
+  			//This will be the next "id" to add into as we start at 0
+  			var groupSize = snapshot.size;
+  			//Loop through the current users and add into them the new user info
+  			snapshot.forEach(member) => {
+  			db.collection("USERS").doc(member.get("id")).collection("MATCHES")
+				.doc(groupSize).set(getUserProfile(user.get("id"), user.get("first_name")));
+			}
+			//Now that we have updated the information for each user
+			//Update the info for the group file
+			db.collection('GROUPS').doc(groupFileName).set(getGroupDoc(groupSize+1));
+	}
+}
+
+/*
+Will test for the strength between a given user and an existing group
+*/
+function isMatchStrong() {
+	return true;
+}
+
+/*
+Takes a snapshot of the available users and returns the BEST match of the users
+*/
+function getStrengthOfMatches(querySnapshot freeUsers) {
+	//An optimisation problem to find the largest but strongest match for a given set of users
+
+	//PLACEHOLDER
+	//Returns the maximal group from the given snapshot
+	return [0, 1];
 }
 
 /*
@@ -85,7 +168,7 @@ function getUserProfile(id, firstName) {
 	return data = {
 		first_name: firstName,
 		id: id
-	}
+	};
 }
 
 /*
@@ -94,7 +177,7 @@ Returns the map to be added to the "GROUPS" collection
 function getGroupDoc(groupSize) {
 	return data = {
 		group_size: groupSize
-	}
+	};
 }
 
 /*
@@ -119,7 +202,7 @@ function generateGroupFileName() {
 	var mm = date.getMonth()+1; //January is 0!
 	var yyyy = date.getFullYear();
 	if(dd<10){
-    dd='0'+dd;
+    	dd='0'+dd;
 	} 
 	if(mm<10){
 	    mm='0'+mm;
