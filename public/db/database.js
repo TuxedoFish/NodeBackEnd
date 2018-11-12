@@ -104,7 +104,8 @@ function createGroupFromArray(group, size) {
 	//Add the file locations of the users to the file
 	for(var i=0; i<group.length; i++) {
 		console.log("adding into GROUPS => " + groupFileName + " => ids => " + i.toString());
-		db.collection("GROUPS").doc(groupFileName).collection("ids").doc(i.toString()).set({id: group.get(i).get("id")});
+		db.collection("GROUPS").doc(groupFileName).collection("ids").doc(i.toString()).set(
+			{id: group[i].get("id")});
 	}
 	//Update all of the individual elements
 	group.forEach(function(user) {
