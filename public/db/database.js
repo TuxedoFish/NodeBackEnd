@@ -141,13 +141,14 @@ function addIntoGroup(user, groupFileName) {
   			//Obtain the current size of the group 
   			//This will be the next "id" to add into as we start at 0
   			var groupSize = snapshot.size;
+  			var mID = groupSize - 1;
+  			var oID = groupSize - 2;
   			//Loop through the current users and add into them the new user info
   			snapshot.docs.forEach(function(member) {
   			db.collection("USERS").doc(member.get("id")).collection("MATCHES")
-				.doc(groupSize.toString()).set(getUserProfile(user.get("id"), user.get("first_name")));
+				.doc(oID.toString()).set(getUserProfile(user.get("id"), user.get("first_name")));
 			});
   			//Add into the group => ids collection
-  			var mID = groupSize - 1;
   			db.collection('GROUPS').doc(groupFileName).collection("ids").doc(mID.toString())
   				.set( {id: user.get("id")} );
 			//Now that we have updated the information for each user
