@@ -155,7 +155,7 @@ function isMatchStrong() {
 /*
 Takes a snapshot of the available users and returns the BEST match of the users
 */
-function getStrengthOfMatches(querySnapshot freeUsers) {
+function getStrengthOfMatches(freeUsers) {
 	//An optimisation problem to find the largest but strongest match for a given set of users
 
 	//PLACEHOLDER
