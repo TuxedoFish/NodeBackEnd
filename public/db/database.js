@@ -127,6 +127,7 @@ function createGroupFromArray(group, size) {
 	});
 
 	//Add the space in this array to be checked
+	console.log("room in the group : " + (5-size));
 	spaces.push( { id: groupFileName, space: (5-size) } );
 }
 
