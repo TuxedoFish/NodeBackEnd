@@ -156,12 +156,11 @@ function addIntoGroup(user, groupFileName) {
 			db.collection('GROUPS').doc(groupFileName).set(getGroupDoc(groupSize+1));
 			//Update the status of the user and the ids to finish
 			//Add in all of the ids to the new user
-			var j=0;
-			snapshot.docs.forEach(function(partner) {
+			for(var j=0; j<snapshot.docs.length; j++) {
 	  			db.collection("USERS").doc(user.get("id")).collection("MATCHES")
-					.doc(j.toString()).set(getUserProfile(partner.get("id"), partner.get("first_name")));
-				j++;
-			});
+					.doc(j.toString()).set(getUserProfile(snapshot.docs[j].get("id"), 
+												snapshot.docs[j].get("first_name")));
+			}
 			db.collection("USERS").doc(user.get("id")).update(getUserInformation(groupFileName, groupFileName));
 	}, err => {
 	  console.log(`Encountered error: ${err}`);
