@@ -158,7 +158,7 @@ function addIntoGroup(user, groupFileName) {
 			//Add in all of the ids to the new user
 			var j;
 			for(j = 0; j<snapshot.docs.length; j++) {
-				console.log("add into id : " + j);
+				console.log("add into id : " + j + " info : " + snapshot.docs[j].get("id"));
 	  			db.collection("USERS").doc(user.get("id")).collection("MATCHES")
 					.doc(j.toString()).set(getUserProfile(snapshot.docs[j].get("id"), 
 												snapshot.docs[j].get("first_name")));
