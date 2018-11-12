@@ -84,7 +84,7 @@ function listenForRequests() {
 					}
 				}
 			}
-			
+
 			//having completed all of the logic it unlocks the system
 			lock=false;
 		}
@@ -133,14 +133,16 @@ function addIntoGroup(user, groupFileName) {
   			//This will be the next "id" to add into as we start at 0
   			var groupSize = snapshot.size;
   			//Loop through the current users and add into them the new user info
-  			snapshot.forEach(member) => {
+  			snapshot.docs.forEach(function(member) {
   			db.collection("USERS").doc(member.get("id")).collection("MATCHES")
 				.doc(groupSize).set(getUserProfile(user.get("id"), user.get("first_name")));
-			}
+			});
 			//Now that we have updated the information for each user
 			//Update the info for the group file
 			db.collection('GROUPS').doc(groupFileName).set(getGroupDoc(groupSize+1));
-	}
+	}, err => {
+	  console.log(`Encountered error: ${err}`);
+	});
 }
 
 /*
