@@ -103,6 +103,7 @@ function createGroupFromArray(group, size) {
 	db.collection("GROUPS").doc(groupFileName).set(getGroupDoc(size));
 	//Add the file locations of the users to the file
 	for(var i=0; i<group.length; i++) {
+		console.log("adding into GROUPS => " + groupFileName + " => ids => " + i);
 		db.collection("GROUPS").doc(groupFileName).collection("ids").doc(i).set({id: group.get(i).get("id")});
 	}
 	//Update all of the individual elements
