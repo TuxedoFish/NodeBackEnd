@@ -144,6 +144,10 @@ function addIntoGroup(user, groupFileName) {
   			db.collection("USERS").doc(member.get("id")).collection("MATCHES")
 				.doc(groupSize.toString()).set(getUserProfile(user.get("id"), user.get("first_name")));
 			});
+  			//Add into the group => ids collection
+  			var mID = groupSize - 1;
+  			db.collection('GROUPS').doc(groupFileName).collection("ids").doc(mID.toString())
+  				.set( {id: user.get("id")} );
 			//Now that we have updated the information for each user
 			//Update the info for the group file
 			db.collection('GROUPS').doc(groupFileName).set(getGroupDoc(groupSize+1));
