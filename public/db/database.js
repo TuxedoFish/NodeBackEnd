@@ -46,8 +46,9 @@ function listenForRequests() {
 			console.log(docs.length);
 
 			if(docs.length>0) {
+				console.log("number of spaces: " + spaces.length);
 				//Logic for if we have got less then 5 users - Put into small groups and add new users to them
-				if(spaces.size>0) {
+				if(spaces.length>0) {
 					//We have a group that may be a possible match
 					for(var i=0; i<docs.length; i++) {
 						//Keeps looking at the amount of spaces remaining until it resolves and finds a fit
