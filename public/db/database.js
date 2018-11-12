@@ -146,7 +146,7 @@ function addIntoGroup(user, groupFileName) {
 			});
 			//Now that we have updated the information for each user
 			//Update the info for the group file
-			db.collection('GROUPS').doc(groupFileName).set(getGroupDoc((groupSize+1));
+			db.collection('GROUPS').doc(groupFileName).set(getGroupDoc(groupSize+1));
 	}, err => {
 	  console.log(`Encountered error: ${err}`);
 	});
