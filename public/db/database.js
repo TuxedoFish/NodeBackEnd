@@ -138,11 +138,11 @@ Given one element from a querySnapshot this function should update an existing g
 function addIntoGroup(user, groupFileName) {
 	var groupQuery = db.collection('GROUPS').doc(groupFileName).collection("ids").get()
   		.then(snapshot => {
+  			var groupSize = snapshot.size;
 			//Update the info for the group file
 			db.collection('GROUPS').doc(groupFileName).set(getGroupDoc(groupSize+1));
   			//Obtain the current size of the group 
   			//This will be the next "id" to add into as we start at 0
-  			var groupSize = snapshot.size;
   			var mID = groupSize;
   			var oID = groupSize - 1;
   			//Loop through the current users and add into them the new user info
