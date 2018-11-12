@@ -54,7 +54,7 @@ function listenForRequests() {
 						//Keeps looking at the amount of spaces remaining until it resolves and finds a fit
 						var resolved = false;
 						var j = 0;
-						while(!resolved) {
+						while(!resolved && j<spaces.length) {
 							if(spaces[j][SPACE_LEFT]>0) {
 								//Tests if there is a strong match between the group and the searching user
 								if(isMatchStrong()) {
@@ -67,6 +67,7 @@ function listenForRequests() {
 									j ++;
 								}
 							} else {
+								//Should splice instead
 								spaces = spaces.shift;
 							}
 						}
