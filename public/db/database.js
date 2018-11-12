@@ -72,12 +72,14 @@ function listenForRequests() {
 					//Here we do not have any spaces currently in any groups
 					//We will only create a group if there is at least 2 users with a significant match
 					if(docs.size > 1) {
+						console.log("I should make a group");
+
 						//Returns the indexes of the optimal group
 						var indexes = getStrengthOfMatches(docs);
 
 						//Creates the group from the indexes
 						var group = [];
-						indexes.forEach(function(index) { group.push(docs.get(index)); })
+						indexes.forEach(function(index) { group.push(docs.get(index)); });
 
 						//Function creates the group in the database
 						createGroupFromArray(group, 2);
