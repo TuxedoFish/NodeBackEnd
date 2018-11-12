@@ -107,7 +107,7 @@ function createGroupFromArray(group, size) {
 	for(var i=0; i<group.length; i++) {
 		console.log("adding into GROUPS => " + groupFileName + " => ids => " + i.toString());
 		db.collection("GROUPS").doc(groupFileName).collection("ids").doc(i.toString()).set(
-			{id: group[i].get("id")});
+			{"id": group[i].get("id")});
 	}
 	//Update all of the individual elements
 	group.forEach(function(user) {
@@ -129,7 +129,7 @@ function createGroupFromArray(group, size) {
 
 	//Add the space in this array to be checked
 	console.log("room in the group : " + (5-size));
-	spaces.push( { id: groupFileName, space: (5-size) } );
+	spaces.push( { "id": groupFileName, "space": (5-size) } );
 }
 
 /*
@@ -154,6 +154,8 @@ function addIntoGroup(user, groupFileName) {
 			//Now that we have updated the information for each user
 			//Update the info for the group file
 			db.collection('GROUPS').doc(groupFileName).set(getGroupDoc(groupSize+1));
+			//Update the status of the user to finish
+			db.collection("USERS").doc(user.get("id")).update(getUserInformation(groupFileName, groupFileName));
 	}, err => {
 	  console.log(`Encountered error: ${err}`);
 	});
