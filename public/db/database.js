@@ -43,13 +43,13 @@ function listenForRequests() {
 			var ID = "id";
 			var SPACE_LEFT = "space";
 
-			console.log(docs.size);
+			console.log(docs.length);
 
-			if(docs.size>0) {
+			if(docs.length>0) {
 				//Logic for if we have got less then 5 users - Put into small groups and add new users to them
 				if(spaces.size>0) {
 					//We have a group that may be a possible match
-					for(var i=0; i<docs.size; i++) {
+					for(var i=0; i<docs.length; i++) {
 						//Keeps looking at the amount of spaces remaining until it resolves and finds a fit
 						var resolved = false;
 						var j = 0;
@@ -73,7 +73,7 @@ function listenForRequests() {
 				} else {
 					//Here we do not have any spaces currently in any groups
 					//We will only create a group if there is at least 2 users with a significant match
-					if(docs.size > 1) {
+					if(docs.length > 1) {
 						console.log("I should make a group");
 
 						//Returns the indexes of the optimal group
