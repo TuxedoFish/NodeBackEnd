@@ -142,11 +142,11 @@ function addIntoGroup(user, groupFileName) {
   			//Loop through the current users and add into them the new user info
   			snapshot.docs.forEach(function(member) {
   			db.collection("USERS").doc(member.get("id")).collection("MATCHES")
-				.doc(groupSize).set(getUserProfile(user.get("id"), user.get("first_name")));
+				.doc(groupSize.toString()).set(getUserProfile(user.get("id"), user.get("first_name")));
 			});
 			//Now that we have updated the information for each user
 			//Update the info for the group file
-			db.collection('GROUPS').doc(groupFileName).set(getGroupDoc(groupSize+1));
+			db.collection('GROUPS').doc(groupFileName).set(getGroupDoc((groupSize+1));
 	}, err => {
 	  console.log(`Encountered error: ${err}`);
 	});
