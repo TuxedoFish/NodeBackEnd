@@ -81,7 +81,7 @@ function listenForRequests() {
 
 						//Creates the group from the indexes
 						var group = [];
-						indexes.forEach(function(index) { group.push(docs.get(index)); });
+						indexes.forEach(function(index) { group.push(docs[index]); });
 
 						//Function creates the group in the database
 						createGroupFromArray(group, 2);
