@@ -59,7 +59,7 @@ function listenForRequests() {
 								//Tests if there is a strong match between the group and the searching user
 								if(isMatchStrong()) {
 									//Logic here to add a user to an existing group
-									addIntoGroup(docs[i], spaces[j][id]);
+									addIntoGroup(docs[i], spaces[j][ID]);
 									resolved = true;
 									spaces[j][SPACE_LEFT] --;
 								} else {
