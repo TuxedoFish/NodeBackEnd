@@ -157,10 +157,10 @@ function addIntoGroup(user, groupFileName) {
 			//Update the status of the user and the ids to finish
 			//Add in all of the ids to the new user
 			var j=0;
-			snapshot.docs.forEach(function(member) {
+			snapshot.docs.forEach(function(partner) {
 	  			db.collection("USERS").doc(user.get("id")).collection("MATCHES")
-					.doc(j.toString()).set(getUserProfile(member.get("id"), member.get("first_name")));
-					j++;
+					.doc(j.toString()).set(getUserProfile(partner.get("id"), partner.get("first_name")));
+				j++;
 			});
 			db.collection("USERS").doc(user.get("id")).update(getUserInformation(groupFileName, groupFileName));
 	}, err => {
