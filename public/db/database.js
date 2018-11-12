@@ -107,7 +107,7 @@ function createGroupFromArray(group, size) {
 	for(var i=0; i<group.length; i++) {
 		console.log("adding into GROUPS => " + groupFileName + " => ids => " + i.toString());
 		db.collection("GROUPS").doc(groupFileName).collection("ids").doc(i.toString()).set(
-			{"id": group[i].get("id")});
+			{"id": group[i].get("id"), "first_name": group[i].get("first_name")});
 	}
 	//Update all of the individual elements
 	group.forEach(function(user) {
@@ -150,7 +150,7 @@ function addIntoGroup(user, groupFileName) {
 			});
   			//Add into the group => ids collection
   			db.collection('GROUPS').doc(groupFileName).collection("ids").doc(mID.toString())
-  				.set( {id: user.get("id")} );
+  				.set( {id: user.get("id"), first_name: user.get("first_name")} );
 			//Now that we have updated the information for each user
 			//Update the info for the group file
 			db.collection('GROUPS').doc(groupFileName).set(getGroupDoc(groupSize+1));
