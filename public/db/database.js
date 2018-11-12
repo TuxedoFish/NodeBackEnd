@@ -43,6 +43,8 @@ function listenForRequests() {
 			var ID = "id";
 			var SPACE_LEFT = "space";
 
+			console.log(docs.size);
+
 			if(docs.size>0) {
 				//Logic for if we have got less then 5 users - Put into small groups and add new users to them
 				if(spaces.size>0) {
