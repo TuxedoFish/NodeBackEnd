@@ -77,10 +77,10 @@ function listenForRequests() {
 
 						//Creates the group from the indexes
 						var group = [];
-						indexes.forEach(function(index) { group.push(docs[index]); })
+						indexes.forEach(function(index) { group.push(docs.get(index)); })
 
 						//Function creates the group in the database
-						createGroupFromArray(group);
+						createGroupFromArray(group, 2);
 					}
 				}
 			}
@@ -99,7 +99,7 @@ function createGroupFromArray(group, size) {
 	db.collection("GROUPS").doc(groupFileName).set(getGroupDoc(size));
 	//Add the file locations of the users to the file
 	for(var i=0; i<group.length; i++) {
-		db.collection("GROUPS").doc(groupFileName).collection("ids").doc(i).set({id: user.get("id")});
+		db.collection("GROUPS").doc(groupFileName).collection("ids").doc(i).set({id: group.get(i).get("id")});
 	}
 	//Update all of the individual elements
 	group.forEach(function(user) {
