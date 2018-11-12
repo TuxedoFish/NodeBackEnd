@@ -134,7 +134,7 @@ function createGroupFromArray(group, size) {
 Given one element from a querySnapshot this function should update an existing group
 */
 function addIntoGroup(user, groupFileName) {
-	var groupQuery = db.collection('GROUPS').doc(groupFileName).collection(ids).get()
+	var groupQuery = db.collection('GROUPS').doc(groupFileName).collection("ids").get()
   		.then(snapshot => {
   			//Obtain the current size of the group 
   			//This will be the next "id" to add into as we start at 0
