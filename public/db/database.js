@@ -7,6 +7,14 @@ var db;
 
 var spaces = [];
 
+var Space = {
+    // Initialize the film
+    init: function (id, space) {
+        this.ID = id;
+        this.SPACE_LEFT = space;
+    }
+};
+
 var lock = false;
 
 function initFirebase() {
@@ -40,8 +48,6 @@ function listenForRequests() {
 			console.log(`Received query snapshot of size ${querySnapshot.size}`);
 
 			var finished = true;
-			var ID = "id";
-			var SPACE_LEFT = "space";
 
 			console.log(docs.length);
 
@@ -55,13 +61,13 @@ function listenForRequests() {
 						var resolved = false;
 						var j = 0;
 						while(!resolved && j<spaces.length) {
-							if(spaces[j][SPACE_LEFT]>0) {
+							if(spaces[j].SPACE_LEFT>0) {
 								//Tests if there is a strong match between the group and the searching user
 								if(isMatchStrong()) {
 									//Logic here to add a user to an existing group
-									addIntoGroup(docs[i], spaces[j][ID]);
+									addIntoGroup(docs[i], spaces[j].ID);
 									resolved = true;
-									spaces[j][SPACE_LEFT] --;
+									spaces[j].SPACE_LEFT --;
 								} else {
 									//Otherwise carry on to the next element
 									j ++;
@@ -129,7 +135,11 @@ function createGroupFromArray(group, size) {
 
 	//Add the space in this array to be checked
 	console.log("room in the group : " + (5-size));
-	spaces.push( { "id": groupFileName, "space": (5-size) } );
+
+	var mSpace = Object.create(Space);
+	mSpace.init(groupFileName, 5-size);
+
+	spaces.push(mSpace);
 }
 
 /*
