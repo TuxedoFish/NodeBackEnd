@@ -65,9 +65,11 @@ function listenForRequests() {
 								//Tests if there is a strong match between the group and the searching user
 								if(isMatchStrong()) {
 									//Logic here to add a user to an existing group
-									addIntoGroup(docs[i], spaces[j].ID);
+									if( addIntoGroup(docs[i], spaces[j].ID) ) {
+										spaces[j].SPACE_LEFT --;
+									}
+									//If it comes back false we don't want to add it anyways
 									resolved = true;
-									spaces[j].SPACE_LEFT --;
 								} else {
 									//Otherwise carry on to the next element
 									j ++;
@@ -181,13 +183,17 @@ function addIntoGroup(user, groupFileName) {
 													snapshot.docs[j].get("first_name")));
 				}
 				db.collection("USERS").doc(user.get("id")).update(getUserInformation(groupFileName, groupFileName));
+				return true;
 			} else {
 				//User was already within the group i.e duplicate
 	  			console.log(`Timing error: user : ` + user.get("id") + ' was already contained in the group : ' + groupFileName);
+				return false;
 			}
 	}, err => {
 	  console.log(`Encountered error: ${err}`);
 	});
+
+	return false;
 }
 
 /*
