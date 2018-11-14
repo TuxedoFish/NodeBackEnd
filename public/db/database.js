@@ -148,31 +148,43 @@ Given one element from a querySnapshot this function should update an existing g
 function addIntoGroup(user, groupFileName) {
 	var groupQuery = db.collection('GROUPS').doc(groupFileName).collection("ids").get()
   		.then(snapshot => {
-  			var groupSize = snapshot.size;
-			//Update the info for the group file
-			db.collection('GROUPS').doc(groupFileName).set(getGroupDoc(groupSize+1));
-  			//Obtain the current size of the group 
-  			//This will be the next "id" to add into as we start at 0
-  			var mID = groupSize;
-  			var oID = groupSize - 1;
-  			//Loop through the current users and add into them the new user info
-  			snapshot.docs.forEach(function(member) {
-  			db.collection("USERS").doc(member.get("id")).collection("MATCHES")
-				.doc(oID.toString()).set(getUserProfile(user.get("id"), user.get("first_name")));
-			});
-  			//Add into the group => ids collection
-  			db.collection('GROUPS').doc(groupFileName).collection("ids").doc(mID.toString())
-  				.set( {id: user.get("id"), first_name: user.get("first_name")} );
-			//Update the status of the user and the ids to finish
-			//Add in all of the ids to the new user
-			var j;
-			for(j = 0; j<snapshot.docs.length; j++) {
-				console.log("add into id : " + j + " info : " + snapshot.docs[j].get("id"));
-	  			db.collection("USERS").doc(user.get("id")).collection("MATCHES")
-					.doc(j.toString()).set(getUserProfile(snapshot.docs[j].get("id"), 
-												snapshot.docs[j].get("first_name")));
+  			//Check that the user is not already within this group
+  			var add = true;
+  			var i;
+  			for(i=0; i<snapshot.docs.length; i++) {
+  				if(snapshot.docs[i].get("id") === user.get("id")) { add = false; }
+  			}
+
+  			if(add) {
+	  			var groupSize = snapshot.size;
+				//Update the info for the group file
+				db.collection('GROUPS').doc(groupFileName).set(getGroupDoc(groupSize+1));
+	  			//Obtain the current size of the group 
+	  			//This will be the next "id" to add into as we start at 0
+	  			var mID = groupSize;
+	  			var oID = groupSize - 1;
+	  			//Loop through the current users and add into them the new user info
+	  			snapshot.docs.forEach(function(member) {
+	  			db.collection("USERS").doc(member.get("id")).collection("MATCHES")
+					.doc(oID.toString()).set(getUserProfile(user.get("id"), user.get("first_name")));
+				});
+	  			//Add into the group => ids collection
+	  			db.collection('GROUPS').doc(groupFileName).collection("ids").doc(mID.toString())
+	  				.set( {id: user.get("id"), first_name: user.get("first_name")} );
+				//Update the status of the user and the ids to finish
+				//Add in all of the ids to the new user
+				var j;
+				for(j = 0; j<snapshot.docs.length; j++) {
+					console.log("add into id : " + j + " info : " + snapshot.docs[j].get("id"));
+		  			db.collection("USERS").doc(user.get("id")).collection("MATCHES")
+						.doc(j.toString()).set(getUserProfile(snapshot.docs[j].get("id"), 
+													snapshot.docs[j].get("first_name")));
+				}
+				db.collection("USERS").doc(user.get("id")).update(getUserInformation(groupFileName, groupFileName));
+			} else {
+				//User was already within the group i.e duplicate
+	  			console.log(`Timing error: user : ` + user.get("id") + ' was already contained in the group : ' + groupFileName);
 			}
-			db.collection("USERS").doc(user.get("id")).update(getUserInformation(groupFileName, groupFileName));
 	}, err => {
 	  console.log(`Encountered error: ${err}`);
 	});
