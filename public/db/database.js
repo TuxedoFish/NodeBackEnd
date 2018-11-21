@@ -55,8 +55,6 @@ function listenForRequests() {
 function handleRequest(docs, spaces) {
 	var finished = true;
 
-	console.log(docs.length);
-
 	if(docs.length>0) {
 		console.log("number of spaces: " + spaces.length);
 		//Logic for if we have got less then 5 users - Put into small groups and add new users to them
@@ -282,7 +280,7 @@ function updateSpace(__id, __space) {
 	};
 
 	//Updates a file to represent the space in file X
-	db.collection("GROUPS").doc("log").collection("SPACES").doc(id).update(space_left);
+	db.collection("GROUPS").doc("log").collection("SPACES").doc(__id).update(data);
 }
 
 /*
