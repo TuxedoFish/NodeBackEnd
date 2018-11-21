@@ -44,88 +44,76 @@ function listenForRequests() {
 		    var docs = querySnapshot.docs;
 		    //purely for debugging purposes!
 			console.log(`Received query snapshot of size ${querySnapshot.size}`);
-
-			var finished = true;
-
-			console.log(docs.length);
-
-			//Grabs a local version of the spaces logged previously
-			var query = syncSpaces();
-			var spaces=[];
-
-			query.get().then(snapshot => {
-			    snapshot.forEach(doc => {
-			    	var mSpace = Object.create(Space);
-					mSpace.init(doc.get("id"), doc.get("space"));
-
-			    	spaces.put[mSpace];
-				});
-			})
-		    .catch(err => {
-		    	console.log('Error getting documents', err);
-		    });
-
-			if(docs.length>0) {
-				console.log("number of spaces: " + spaces.length);
-				//Logic for if we have got less then 5 users - Put into small groups and add new users to them
-				if(spaces.length>0) {
-					//We have a group that may be a possible match
-					for(var i=0; i<docs.length; i++) {
-						//Keeps looking at the amount of spaces remaining until it resolves and finds a fit
-						var resolved = false;
-						var j = 0;
-						while(!resolved && j<spaces.length) {
-							if(spaces[j].SPACE_LEFT>0) {
-								//Tests if there is a strong match between the group and the searching user
-								if(isMatchStrong()) {
-									//Logic here to add a user to an existing group
-									if( addIntoGroup(docs[i], spaces[j].ID) ) {
-										//Needs to update the local version for this logic loop
-										spaces[j].SPACE_LEFT --;
-										//Needs to also update the version on the databse
-										updateSpace(spaces[j].ID, spaces[j].SPACE_LEFT);
-									}
-									//If it comes back false we don't want to add it anyways
-									resolved = true;
-								} else {
-									//Otherwise carry on to the next element
-									j ++;
-								}
-							} else {
-								//Should splice instead
-								spaces = spaces.shift;
-							}
-						}
-					}
-				} else {
-					//Here we do not have any spaces currently in any groups
-					//We will only create a group if there is at least 2 users with a significant match
-					if(docs.length > 1) {
-						console.log("I should make a group");
-
-						//Returns the indexes of the optimal group
-						var indexes = getStrengthOfMatches(docs);
-
-						//Creates the group from the indexes
-						var group = [];
-						indexes.forEach(function(index) { group.push(docs[index]); });
-
-						//Function creates the group in the database
-						createGroupFromArray(group, 2);
-					}
-				}
-			}
-
-			//having completed all of the logic it unlocks the system
-			lock=false;
-			//
-			if(spaces.length != 0) {
-				console.log(spaces[0].SPACE_LEFT)
-			}
+			//Grabs the current info and then handles the requests
+			syncSpaces(docs);
 		}
 	}, err => {
 	  console.log(`Encountered error: ${err}`);
 	});
+}
+
+function handleRequest(docs, spaces) {
+	var finished = true;
+
+	console.log(docs.length);
+
+	if(docs.length>0) {
+		console.log("number of spaces: " + spaces.length);
+		//Logic for if we have got less then 5 users - Put into small groups and add new users to them
+		if(spaces.length>0) {
+			//We have a group that may be a possible match
+			for(var i=0; i<docs.length; i++) {
+				//Keeps looking at the amount of spaces remaining until it resolves and finds a fit
+				var resolved = false;
+				var j = 0;
+				while(!resolved && j<spaces.length) {
+					if(spaces[j].SPACE_LEFT>0) {
+						//Tests if there is a strong match between the group and the searching user
+						if(isMatchStrong()) {
+							//Logic here to add a user to an existing group
+							if( addIntoGroup(docs[i], spaces[j].ID) ) {
+								//Needs to update the local version for this logic loop
+								spaces[j].SPACE_LEFT --;
+								//Needs to also update the version on the databse
+								updateSpace(spaces[j].ID, spaces[j].SPACE_LEFT);
+							}
+							//If it comes back false we don't want to add it anyways
+							resolved = true;
+						} else {
+							//Otherwise carry on to the next element
+							j ++;
+						}
+					} else {
+						//Should splice instead
+						spaces = spaces.shift;
+					}
+				}
+			}
+		} else {
+			//Here we do not have any spaces currently in any groups
+			//We will only create a group if there is at least 2 users with a significant match
+			if(docs.length > 1) {
+				console.log("I should make a group");
+
+				//Returns the indexes of the optimal group
+				var indexes = getStrengthOfMatches(docs);
+
+				//Creates the group from the indexes
+				var group = [];
+				indexes.forEach(function(index) { group.push(docs[index]); });
+
+				//Function creates the group in the database
+				createGroupFromArray(group, 2);
+			}
+		}
+	}
+
+	//having completed all of the logic it unlocks the system
+	lock=false;
+	//
+	if(spaces.length != 0) {
+		console.log(spaces[0].SPACE_LEFT)
+	}
 }
 
 function createGroupFromArray(group, size) {
@@ -264,8 +252,24 @@ function getUserInformation(groupName, groupFileLoc) {
 }
 
 //Syncs the current information on the spaces in current groups
-function syncSpaces() {
+function syncSpaces(docs) {
+	//Grabs a local version of the spaces logged previously
 	var query = db.collection("GROUPS").doc("log").collection("SPACES").where('space', '>', 0);
+	var spaces=[];
+
+	query.get().then(snapshot => {
+	    snapshot.forEach(doc => {
+	    	var mSpace = Object.create(Space);
+			mSpace.init(doc.get("id"), doc.get("space"));
+
+	    	spaces.put[mSpace];
+		});
+	})
+    .catch(err => {
+    	console.log('Error getting documents', err);
+    });
+
+    handleRequest(docs, spaces)
 }
 
 //Updates the server side picture to reflect the space
