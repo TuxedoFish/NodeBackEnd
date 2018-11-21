@@ -5,8 +5,6 @@
 var admin = require('firebase-admin');
 var db;
 
-var spaces = [];
-
 var Space = {
     // Initialize the film
     init: function (id, space) {
@@ -51,6 +49,22 @@ function listenForRequests() {
 
 			console.log(docs.length);
 
+			//Grabs a local version of the spaces logged previously
+			var query = syncSpaces();
+			var spaces=[];
+
+			query.get().then(snapshot => {
+			    snapshot.forEach(doc => {
+			    	var mSpace = Object.create(Space);
+					mSpace.init(doc.get("id"), doc.get("space"));
+
+			    	spaces.put[mSpace];
+				});
+			})
+		    .catch(err => {
+		    	console.log('Error getting documents', err);
+		    });
+
 			if(docs.length>0) {
 				console.log("number of spaces: " + spaces.length);
 				//Logic for if we have got less then 5 users - Put into small groups and add new users to them
@@ -66,7 +80,10 @@ function listenForRequests() {
 								if(isMatchStrong()) {
 									//Logic here to add a user to an existing group
 									if( addIntoGroup(docs[i], spaces[j].ID) ) {
+										//Needs to update the local version for this logic loop
 										spaces[j].SPACE_LEFT --;
+										//Needs to also update the version on the databse
+										updateSpace(spaces[j].ID, spaces[j].SPACE_LEFT);
 									}
 									//If it comes back false we don't want to add it anyways
 									resolved = true;
@@ -142,10 +159,8 @@ function createGroupFromArray(group, size) {
 	//Add the space in this array to be checked
 	console.log("room in the group : " + (5-size));
 
-	var mSpace = Object.create(Space);
-	mSpace.init(groupFileName, 5-size);
-
-	spaces.push(mSpace);
+	//Updates the file stored in the info of GROUPS
+	updateSpace(groupFileName, (5-size));
 }
 
 /*
@@ -248,6 +263,23 @@ function getUserInformation(groupName, groupFileLoc) {
 	};
 }
 
+//Syncs the current information on the spaces in current groups
+function syncSpaces() {
+	var query = db.collection("GROUPS").doc("log").collection("SPACES").where('space', '!=', 0);
+}
+
+//Updates the server side picture to reflect the space
+function updateSpace(__id, __space) {
+	//Only required data is the space
+	//Potentially add in encrypted data ?? for matching
+	data = {
+		space: __space,
+		id: __id
+	};
+
+	//Updates a file to represent the space in file X
+	db.collection("GROUPS").doc("log").collection("SPACES").doc(id).update(space_left);
+}
 
 /*
 Creates a function name given the current time and day and a random string of characters
