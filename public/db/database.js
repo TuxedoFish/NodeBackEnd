@@ -265,7 +265,7 @@ function getUserInformation(groupName, groupFileLoc) {
 
 //Syncs the current information on the spaces in current groups
 function syncSpaces() {
-	var query = db.collection("GROUPS").doc("log").collection("SPACES").where('space', '!=', 0);
+	var query = db.collection("GROUPS").doc("log").collection("SPACES").where('space', '>', 0);
 }
 
 //Updates the server side picture to reflect the space
