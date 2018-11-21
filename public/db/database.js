@@ -253,21 +253,23 @@ function getUserInformation(groupName, groupFileLoc) {
 function syncSpaces(docs) {
 	//Grabs a local version of the spaces logged previously
 	var query = db.collection("GROUPS").doc("log").collection("SPACES").where('space', '>', 0);
-	var spaces=[];
 
 	query.get().then(snapshot => {
+		//To hold the loaded in space
+		var spaces=[];
+	    //Fill the array with the information
 	    snapshot.forEach(doc => {
 	    	var mSpace = Object.create(Space);
-			mSpace.init(doc.get("id"), doc.get("space"));
+			mSpace.init(doc.get("id").toString(), doc.get("space"));
 
 	    	spaces.put[mSpace];
 		});
+	    //Handle the request with the data having been loaded
+    	handleRequest(docs, spaces);
 	})
     .catch(err => {
     	console.log('Error getting documents', err);
     });
-
-    handleRequest(docs, spaces)
 }
 
 //Updates the server side picture to reflect the space
