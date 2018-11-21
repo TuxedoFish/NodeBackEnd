@@ -101,6 +101,10 @@ function listenForRequests() {
 
 			//having completed all of the logic it unlocks the system
 			lock=false;
+			//
+			if(spaces.length != 0) {
+				console.log(spaces[0].SPACE_LEFT)
+			}
 		}
 	}, err => {
 	  console.log(`Encountered error: ${err}`);
