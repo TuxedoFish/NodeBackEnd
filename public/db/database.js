@@ -280,7 +280,7 @@ function updateSpace(__id, __space) {
 	};
 
 	//Updates a file to represent the space in file X
-	db.collection("GROUPS").doc("log").collection("SPACES").doc(__id).update(data);
+	db.collection("GROUPS").doc("log").collection("SPACES").doc(__id.toString()).set(data);
 }
 
 /*
